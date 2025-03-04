@@ -8,8 +8,8 @@ const path = require("path");
 const fs = require("fs");
 require("dotenv").config();
 
-// Import Apify Service
-const { startMagicBricksScraper } = require('./apifyService');
+// Import Apify Service - now with both sources
+const { startMagicBricksScraper, startHousingComScraper, fetchAllProperties } = require('./apifyService');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -142,82 +142,117 @@ let propertyCache = {
   expiresIn: 60 * 60 * 1000, // 1 hour in milliseconds
 };
 
-// Get property listings from MagicBricks
+// Get property listings from both MagicBricks and Housing.com
 app.get('/api/properties', async (req, res) => {
   try {
     const now = Date.now();
-    
-    // Check if we have valid cache
-    if (propertyCache.data && 
-        propertyCache.timestamp && 
-        (now - propertyCache.timestamp < propertyCache.expiresIn)) {
-      console.log('Returning cached property data');
-      
-      // Filter cached data based on current request parameters
-      let filteredProperties = propertyCache.data;
-      if (req.query.city && req.query.city !== propertyCache.params?.city) {
-        console.log(`Cache parameters don't match: ${req.query.city} vs ${propertyCache.params?.city}`);
-        // Skip cache if city is different
-      } else {
-        return res.json(filteredProperties);
-      }
-    }
     
     // Extract search parameters from request
     const searchParams = {
       bedrooms: req.query.bedrooms || '2,3',
       propertyType: req.query.propertyType || 'Multistorey-Apartment,Builder-Floor-Apartment,Penthouse,Studio-Apartment,Residential-House,Villa',
-      city: req.query.city || 'New-Delhi'
+      city: req.query.city || 'New-Delhi',
+      source: req.query.source || 'all' // 'all', 'magicbricks', or 'housing'
     };
+    
+    // Generate cache key based on all search parameters to ensure proper caching
+    const cacheKey = `${searchParams.source}-${searchParams.city}-${searchParams.bedrooms}-${searchParams.propertyType}`;
+    
+    // Check if we have valid cache for these specific parameters
+    if (propertyCache.data && 
+        propertyCache.timestamp && 
+        propertyCache.cacheKey === cacheKey &&
+        (now - propertyCache.timestamp < propertyCache.expiresIn)) {
+      console.log(`Returning cached property data for ${cacheKey}`);
+      return res.json(propertyCache.data);
+    }
     
     console.log(`Fetching properties with parameters:`, searchParams);
     
-    // Call Apify service
-    const result = await startMagicBricksScraper(searchParams);
+    let result;
+    
+    // Call appropriate Apify service based on source
+    if (searchParams.source === 'magicbricks') {
+      result = await startMagicBricksScraper(searchParams);
+    } else if (searchParams.source === 'housing') {
+      result = await startHousingComScraper(searchParams);
+    } else {
+      // Fetch from both sources
+      result = await fetchAllProperties(searchParams);
+    }
     
     if (!result.success) {
-      console.error('Error from Apify service:', result.error);
+      console.error(`Error from Apify service for ${searchParams.city}:`, result.error);
       return res.status(500).json({ 
-        error: 'Failed to fetch properties from Apify',
-        details: result.error 
+        success: false,
+        error: `Failed to fetch properties from ${searchParams.city}`,
+        details: result.error,
+        message: `We're currently experiencing difficulties fetching properties in ${searchParams.city}. Please try again later or try a different city.`
       });
     }
     
-    // Standardize the property data format
-    const properties = result.data.map(item => ({
-      id: item.id || `mb-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
-      title: item.name || 'Property Listing',
-      price: item.price_display_value || `₹${item.price?.toLocaleString()}` || 'Price on request',
-      location: item.address || (item.city_name ? `${item.city_name}` : 'Location not specified'),
-      bedrooms: item.bedrooms?.toString() || 'Not specified',
-      bathrooms: item.bathrooms?.toString() || 'Not specified',
-      area: `${item.covered_area || item.carpet_area || ''} ${item.cov_area_unit || item.carp_area_unit || 'sq.ft.'}`,
-      description: item.description || item.seo_description || 'No description available',
-      imageUrl: item.image_url || '',
-      url: item.url ? `https://www.magicbricks.com/${item.url}` : '',
-      landmark: item.landmark || '',
-      ownerName: item.owner_name || '',
-      postedDate: item.posted_date ? new Date(item.posted_date).toLocaleDateString() : '',
-      source: 'MagicBricks'
-    }));
+    // Check if we got empty results
+    const properties = result.properties || result.data || [];
+    if (properties.length === 0) {
+      console.log(`No properties found for ${searchParams.city}`);
+      return res.json({
+        success: true,
+        properties: [],
+        message: `No properties found matching your criteria in ${searchParams.city}`
+      });
+    }
     
-    const responseData = { properties };
+    // Standardize the property data format if needed
+    const standardizedProperties = properties.map(item => {
+      // If it's already in our standard format, return as is
+      if (item.source) {
+        return item;
+      }
+      
+      // Otherwise, transform to standard format (for MagicBricks data)
+      return {
+        id: item.id || `mb-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+        title: item.name || item.title || 'Property Listing',
+        price: item.price_display_value || (item.price ? `₹${item.price.toLocaleString()}` : 'Price on request'),
+        location: item.address || item.location || (item.city_name ? `${item.city_name}` : 'Location not specified'),
+        bedrooms: item.bedrooms?.toString() || searchParams.bedrooms || 'Not specified',
+        bathrooms: item.bathrooms?.toString() || 'Not specified',
+        area: item.area || `${item.covered_area || item.carpet_area || ''} ${item.cov_area_unit || item.carp_area_unit || 'sq.ft.'}`,
+        description: item.description || item.seo_description || 'No description available',
+        imageUrl: item.imageUrl || item.image_url || '',
+        url: item.url ? (item.url.startsWith('http') ? item.url : `https://www.magicbricks.com/${item.url}`) : '',
+        landmark: item.landmark || '',
+        ownerName: item.owner_name || '',
+        postedDate: item.posted_date ? new Date(item.posted_date).toLocaleDateString() : '',
+        source: item.source || 'MagicBricks'
+      };
+    });
     
-    // Update cache
+    const responseData = { 
+      success: true,
+      properties: standardizedProperties,
+      city: searchParams.city,
+      source: searchParams.source,
+      count: standardizedProperties.length
+    };
+    
+    // Update cache with the new key
     propertyCache = {
       timestamp: now,
       data: responseData,
-      params: searchParams,
-      expiresIn: propertyCache.expiresIn
+      cacheKey: cacheKey,
+      expiresIn: 30 * 60 * 1000 // 30 minutes
     };
     
-    console.log(`Returning ${properties.length} properties`);
+    console.log(`Returning ${standardizedProperties.length} properties for ${searchParams.city}`);
     res.json(responseData);
   } catch (error) {
     console.error('Error fetching properties:', error);
     res.status(500).json({ 
+      success: false,
       error: 'Failed to fetch properties',
-      details: error.message
+      details: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }
 });

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { getProperties } from '../utils/api';
 import './PropertyList.css';
 
@@ -11,25 +11,61 @@ const PropertyList = () => {
     propertyType: '',
     city: 'New-Delhi'
   });
+  const [cityStatus, setCityStatus] = useState({});
+  const [sourceFilter, setSourceFilter] = useState('all'); // 'all', 'housing', 'magicbricks'
 
-  useEffect(() => {
-    fetchProperties();
-  }, []);
-
-  const fetchProperties = async () => {
+  // Wrap fetchProperties in useCallback to prevent it from being recreated on each render
+  const fetchProperties = useCallback(async () => {
     setLoading(true);
     setError(null);
     
-    const response = await getProperties(filters);
-    
-    setLoading(false);
-    
-    if (response.success) {
-      setProperties(response.data.properties || []);
-    } else {
-      setError(response.message || 'Failed to fetch properties');
+    try {
+      const response = await getProperties(filters);
+      
+      setLoading(false);
+      
+      if (response.success) {
+        // Filter by source if needed
+        let filteredProperties = response.properties || [];
+        
+        if (sourceFilter === 'housing') {
+          filteredProperties = filteredProperties.filter(prop => prop.source === 'Housing.com');
+        } else if (sourceFilter === 'magicbricks') {
+          filteredProperties = filteredProperties.filter(prop => prop.source === 'MagicBricks');
+        }
+        
+        setProperties(filteredProperties);
+        
+        // Update city status to show as working
+        setCityStatus(prev => ({
+          ...prev,
+          [filters.city]: { status: 'success', message: '' }
+        }));
+      } else {
+        // Track the specific city that failed
+        setCityStatus(prev => ({
+          ...prev,
+          [filters.city]: { status: 'error', message: response.message || 'Failed to fetch properties' }
+        }));
+        setError(response.message || `Failed to fetch properties for ${filters.city}`);
+        setProperties([]);
+      }
+    } catch (err) {
+      setLoading(false);
+      console.error("Property fetch error:", err);
+      setError(`Error: ${err?.message || 'Unknown error fetching properties'}`);
+      // Track the specific city that failed
+      setCityStatus(prev => ({
+        ...prev,
+        [filters.city]: { status: 'error', message: err?.message || 'Unknown error' }
+      }));
+      setProperties([]);
     }
-  };
+  }, [filters, sourceFilter]); // Add filters and sourceFilter as dependencies
+
+  useEffect(() => {
+    fetchProperties();
+  }, [fetchProperties]); // Now fetchProperties is a dependency
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -39,9 +75,25 @@ const PropertyList = () => {
     }));
   };
 
+  const handleSourceFilterChange = (e) => {
+    setSourceFilter(e.target.value);
+  };
+
   const handleFilterSubmit = (e) => {
     e.preventDefault();
     fetchProperties();
+  };
+
+  // Get city label with status indicator
+  const getCityLabel = (cityName, displayName) => {
+    if (!cityStatus[cityName]) return displayName;
+    
+    if (cityStatus[cityName].status === 'success') {
+      return `${displayName} ✓`;
+    } else if (cityStatus[cityName].status === 'error') {
+      return `${displayName} ✗`;
+    }
+    return displayName;
   };
 
   return (
@@ -53,11 +105,11 @@ const PropertyList = () => {
         <div className="filter-group">
           <label>City</label>
           <select name="city" value={filters.city} onChange={handleFilterChange}>
-            <option value="New-Delhi">New Delhi</option>
-            <option value="Mumbai">Mumbai</option>
-            <option value="Bangalore">Bangalore</option>
-            <option value="Hyderabad">Hyderabad</option>
-            <option value="Pune">Pune</option>
+            <option value="New-Delhi">{getCityLabel('New-Delhi', 'New Delhi')}</option>
+            <option value="Mumbai">{getCityLabel('Mumbai', 'Mumbai')}</option>
+            <option value="Bangalore">{getCityLabel('Bangalore', 'Bangalore')}</option>
+            <option value="Hyderabad">{getCityLabel('Hyderabad', 'Hyderabad')}</option>
+            <option value="Pune">{getCityLabel('Pune', 'Pune')}</option>
           </select>
         </div>
         
@@ -72,31 +124,70 @@ const PropertyList = () => {
           </select>
         </div>
         
+        <div className="filter-group">
+          <label>Source</label>
+          <select name="source" value={sourceFilter} onChange={handleSourceFilterChange}>
+            <option value="all">All Sources</option>
+            <option value="housing">Housing.com</option>
+            <option value="magicbricks">MagicBricks</option>
+          </select>
+        </div>
+        
         <button type="submit" className="search-btn">Search Properties</button>
       </form>
       
       {/* Loading and Error states */}
       {loading && <div className="loading-indicator">Loading properties...</div>}
-      {error && <div className="error-message">{error}</div>}
+      {error && (
+        <div className="error-message">
+          <p>{error}</p>
+          <p className="error-help">
+            Try selecting a different city or refreshing the page.
+            {filters.city !== 'New-Delhi' && 
+              <button 
+                onClick={() => {
+                  setFilters(prev => ({...prev, city: 'New-Delhi'}));
+                  setTimeout(fetchProperties, 100);
+                }}
+                className="try-delhi-btn"
+              >
+                Try New Delhi Instead
+              </button>
+            }
+          </p>
+        </div>
+      )}
       
       {/* Property Cards */}
       <div className="property-grid">
-        {properties.length === 0 && !loading ? (
+        {properties.length === 0 && !loading && !error ? (
           <div className="no-results">No properties found matching your criteria</div>
         ) : (
           properties.map(property => (
-            <div key={property.id} className="property-card">
+            <div key={property.id || Math.random().toString()} className="property-card">
               <div className="property-image">
                 {property.imageUrl ? (
-                  <img src={property.imageUrl} alt={property.title} />
+                  <img 
+                    src={property.imageUrl} 
+                    alt={property.title}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = 'https://via.placeholder.com/300x200?text=Property';
+                    }}
+                  />
                 ) : (
                   <div className="placeholder-image">No Image</div>
+                )}
+                {property.source && (
+                  <div className={`property-source ${property.source.toLowerCase().replace('.', '-')}`}>
+                    {property.source}
+                  </div>
                 )}
               </div>
               
               <div className="property-details">
-                <h3 className="property-title">{property.title}</h3>
-                <p className="property-location">{property.location}</p>
+                <h3 className="property-title">{property.title || 'Property Listing'}</h3>
+                <p className="property-location">{property.location || 'Location not specified'}</p>
                 <div className="property-features">
                   {property.bedrooms && (
                     <span className="feature-item">{property.bedrooms} BHK</span>
@@ -105,10 +196,12 @@ const PropertyList = () => {
                     <span className="feature-item">{property.area}</span>
                   )}
                 </div>
-                <div className="property-price">{property.price}</div>
-                <a href={property.url} target="_blank" rel="noopener noreferrer" className="view-btn">
-                  View on MagicBricks
-                </a>
+                <div className="property-price">{property.price || 'Price on request'}</div>
+                {property.url && (
+                  <a href={property.url} target="_blank" rel="noopener noreferrer" className="view-btn">
+                    View on {property.source || 'Website'}
+                  </a>
+                )}
               </div>
             </div>
           ))

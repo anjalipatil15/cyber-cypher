@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import './SpeechRecognition.css';
 
+
 // Real estate keywords in multiple languages
 const realEstateKeywords = {
   en: [
