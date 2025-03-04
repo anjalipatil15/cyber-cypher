@@ -30,7 +30,7 @@ async function startMagicBricksScraper(searchParams = {}) {
       proxy: {
         useApifyProxy: true,
         apifyProxyGroups: ["RESIDENTIAL"],
-        apifyProxyCountry: "IN" // Using US as shown in their example
+        apifyProxyCountry: "IN"  // Changed from "US" to "IN" (ISO code for India)
       }
     };
     
