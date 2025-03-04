@@ -1,0 +1,288 @@
+/* SpeechRecognition.css */
+.speech-recognition-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .controls-section {
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 1.5rem;
+  }
+  
+  .controls-section h2 {
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+  }
+  
+  .control-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .speech-btn, .recording-btn, .save-btn, .translate-btn {
+    padding: 0.75rem 1.25rem;
+    border-radius: 25px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .speech-btn {
+    background-color: var(--secondary-color);
+    color: white;
+  }
+  
+  .speech-btn-active {
+    background-color: var(--accent-color);
+  }
+  
+  .recording-btn {
+    background-color: var(--warning-color);
+    color: white;
+  }
+  
+  .recording-btn-active {
+    background-color: var(--accent-color);
+    animation: pulse 1.5s infinite;
+  }
+  
+  @keyframes pulse {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.7;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  
+  .save-btn {
+    background-color: var(--success-color);
+    color: white;
+  }
+  
+  .language-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .language-select {
+    padding: 0.5rem;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    background-color: white;
+  }
+  
+  .translate-btn {
+    background-color: var(--primary-color);
+    color: white;
+  }
+  
+  .transcription-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .transcription-box, .translation-box {
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 1.5rem;
+  }
+  
+  .transcription-box h3, .translation-box h3 {
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+  }
+  
+  .transcription-textarea {
+    width: 100%;
+    padding: 1rem;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    resize: vertical;
+    font-family: inherit;
+    font-size: 1rem;
+  }
+  
+  .translation-content {
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    border-left: 4px solid var(--secondary-color);
+    min-height: 100px;
+  }
+  
+  .analysis-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .keywords-box, .real-estate-box {
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 1.5rem;
+  }
+  
+  .keywords-box h3, .real-estate-box h3 {
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+  }
+  
+  .highlighted-content, .real-estate-content {
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    line-height: 1.6;
+  }
+  
+  .highlight {
+    background-color: rgba(52, 152, 219, 0.2);
+    border-radius: 3px;
+    padding: 0 3px;
+    font-weight: 500;
+  }
+  
+  .real-estate-suggestions {
+    margin-top: 1rem;
+    border-top: 1px solid #ddd;
+    padding-top: 1rem;
+  }
+  
+  .real-estate-suggestions h4 {
+    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+  }
+  
+  .real-estate-suggestions ul {
+    list-style-type: none;
+  }
+  
+  .real-estate-suggestions li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  
+  .real-estate-suggestions li:last-child {
+    border-bottom: none;
+  }
+  
+  .audio-playback {
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 1.5rem;
+  }
+  
+  .audio-playback h3 {
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+  }
+  
+  .audio-player {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+  
+  .download-btn {
+    background-color: var(--secondary-color);
+    color: white;
+  }
+  
+  .saved-notes {
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 1.5rem;
+  }
+  
+  .saved-notes h3 {
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+  }
+  
+  .no-notes {
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    text-align: center;
+    color: var(--gray-color);
+  }
+  
+  .notes-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+  }
+  
+  .note-card {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    position: relative;
+  }
+  
+  .note-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+  
+  .note-date {
+    font-size: 0.85rem;
+    color: var(--gray-color);
+  }
+  
+  .delete-note {
+    background: none;
+    border: none;
+    color: var(--accent-color);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0;
+  }
+  
+  .note-content {
+    margin-bottom: 0.5rem;
+  }
+  
+  .note-translation {
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    background-color: #e8f4fc;
+    border-radius: 4px;
+    font-style: italic;
+  }
+  
+  .note-keywords {
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .control-buttons,
+    .language-controls {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    
+    .speech-btn, 
+    .recording-btn, 
+    .save-btn, 
+    .translate-btn {
+      margin-bottom: 0.5rem;
+    }
+  }
