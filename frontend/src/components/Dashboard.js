@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+
 import { Link } from 'react-router-dom';
 import { getProperties, getRealEstateNews } from '../utils/api';
 import './Dashboard.css';
@@ -11,11 +11,7 @@ const Dashboard = ({ currentLanguage }) => {
     totalProperties: 0,
     featuredProperties: 0,
     newListingsThisWeek: 0,
-    mostViewedProperties: 0,
-    bySource: {
-      housing: 0,
-      magicbricks: 0
-    }
+
   });
   const [loading, setLoading] = useState({
     properties: true,
@@ -26,8 +22,7 @@ const Dashboard = ({ currentLanguage }) => {
     news: null
   });
   
-  // Fetch property data from API - wrapped in useCallback for dependency management
-  const fetchProperties = useCallback(async () => {
+
     setLoading(prev => ({ ...prev, properties: true }));
     setError(prev => ({ ...prev, properties: null }));
     
@@ -47,8 +42,7 @@ const Dashboard = ({ currentLanguage }) => {
       // Combine all property results
       let allProperties = [];
       responses.forEach(response => {
-        if (response.success && response.properties) {
-          allProperties = [...allProperties, ...response.properties];
+
         }
       });
       
@@ -62,38 +56,7 @@ const Dashboard = ({ currentLanguage }) => {
         return;
       }
       
-      // Filter out duplicates by ID
-      const uniqueProperties = allProperties.reduce((acc, current) => {
-        const x = acc.find(item => item.id === current.id);
-        if (!x) {
-          return acc.concat([current]);
-        } else {
-          return acc;
-        }
-      }, []);
-      
-      // Set all properties
-      setProperties(uniqueProperties);
-      
-      // Select properties to feature - 2 from each source if available
-      const housingProps = uniqueProperties.filter(p => p.source === 'Housing.com').slice(0, 2);
-      const mbProps = uniqueProperties.filter(p => p.source === 'MagicBricks').slice(0, 2);
-      setFeaturedProperties([...housingProps, ...mbProps]);
-      
-      // Calculate statistics
-      const housingCount = uniqueProperties.filter(p => p.source === 'Housing.com').length;
-      const mbCount = uniqueProperties.filter(p => p.source === 'MagicBricks').length;
-      
-      // Generate mock statistics based on real property counts
-      setStatistics({
-        totalProperties: uniqueProperties.length,
-        featuredProperties: Math.min(4, uniqueProperties.length),
-        newListingsThisWeek: Math.floor(uniqueProperties.length * 0.2),
-        mostViewedProperties: Math.floor(uniqueProperties.length * 0.1),
-        bySource: {
-          housing: housingCount,
-          magicbricks: mbCount
-        }
+
       });
       
     } catch (err) {
@@ -105,10 +68,7 @@ const Dashboard = ({ currentLanguage }) => {
     }
     
     setLoading(prev => ({ ...prev, properties: false }));
-  }, []);
-  
-  // Fetch real estate news
-  const fetchRealEstateNews = useCallback(async () => {
+
     setLoading(prev => ({ ...prev, news: true }));
     setError(prev => ({ ...prev, news: null }));
     
@@ -132,13 +92,7 @@ const Dashboard = ({ currentLanguage }) => {
     }
     
     setLoading(prev => ({ ...prev, news: false }));
-  }, []);
-  
-  // Fetch all data on component mount
-  useEffect(() => {
-    fetchProperties();
-    fetchRealEstateNews();
-  }, [fetchProperties, fetchRealEstateNews]);
+
   
   // Helper to format news publication date
   const formatNewsDate = (dateString) => {
@@ -166,12 +120,7 @@ const Dashboard = ({ currentLanguage }) => {
     });
   };
   
-  // Get source badge class
-  const getSourceBadgeClass = (source) => {
-    if (!source) return '';
-    return source.toLowerCase().replace('.', '-');
-  };
-  
+
   return (
     <div className="dashboard-container">
       <div className="dashboard-header">
@@ -193,17 +142,7 @@ const Dashboard = ({ currentLanguage }) => {
               <div className="stat-value">{statistics.totalProperties}</div>
               <div className="stat-label">Total Properties</div>
             </div>
-            <div className="stat-card housing">
-              <div className="stat-value">{statistics.bySource.housing}</div>
-              <div className="stat-label">Housing.com</div>
-            </div>
-            <div className="stat-card magicbricks">
-              <div className="stat-value">{statistics.bySource.magicbricks}</div>
-              <div className="stat-label">MagicBricks</div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-value">{statistics.newListingsThisWeek}</div>
-              <div className="stat-label">New This Week</div>
+
             </div>
           </>
         )}
@@ -232,11 +171,7 @@ const Dashboard = ({ currentLanguage }) => {
                     ) : (
                       <div className="placeholder-image">No Image</div>
                     )}
-                    {property.source && (
-                      <div className={`property-source ${getSourceBadgeClass(property.source)}`}>
-                        {property.source}
-                      </div>
-                    )}
+
                   </div>
                   <div className="property-details">
                     <h4 className="property-title">{property.title}</h4>
@@ -290,11 +225,7 @@ const Dashboard = ({ currentLanguage }) => {
                     ) : (
                       <div className="placeholder-mini-image">No Image</div>
                     )}
-                    {property.source && (
-                      <span className={`mini-source-badge ${getSourceBadgeClass(property.source)}`}>
-                        {property.source === 'Housing.com' ? 'H' : 'MB'}
-                      </span>
-                    )}
+
                   </div>
                   <div className="latest-property-details">
                     <h4 className="property-title">{property.title}</h4>
