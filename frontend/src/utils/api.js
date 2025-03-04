@@ -1,4 +1,3 @@
-
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
   headers: {
@@ -7,7 +6,6 @@ const apiClient = axios.create({
   withCredentials: true,
   timeout: 10000,
 });
-
 
 const handleApiError = (error) => {
   if (error.response) {
@@ -35,6 +33,7 @@ const handleApiError = (error) => {
   }
 };
 
+export const fetchRealEstateNews = async (pageSize) => {
   try {
     console.log('Fetching real estate news...');
     const query = "real estate OR property market OR housing India";
@@ -49,7 +48,6 @@ const handleApiError = (error) => {
     });
     if (response.data && response.data.articles) {
       console.log(`Fetched ${response.data.articles.length} news articles`);
-
       return { success: true, data: response.data.articles };
     } else {
       console.error('Invalid news response structure:', response.data);
@@ -67,7 +65,6 @@ const handleApiError = (error) => {
   }
 };
 
-
 export const sendChatMessage = async (prompt, sourceLanguage, targetLanguage) => {
   try {
     console.log(`Sending chat request to ${API_BASE_URL}/chatbot`);
@@ -78,7 +75,6 @@ export const sendChatMessage = async (prompt, sourceLanguage, targetLanguage) =>
     return handleApiError(error);
   }
 };
-
 
 export const checkServerConnection = async () => {
   try {
@@ -91,4 +87,3 @@ export const checkServerConnection = async () => {
     return false;
   }
 };
-
