@@ -4,7 +4,7 @@ import SpeechToText from "./SpeechToText";
 function App() {
   return (
     <div>
-      <h1>Hello, Cyber Cypher! 🎤</h1>
+      <h1>Live Speech Recognition</h1>
       <SpeechToText />
     </div>
   );
