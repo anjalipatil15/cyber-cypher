@@ -1,444 +1,38 @@
-/* Dashboard.css */
-.dashboard-container {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+
   }
   
   .dashboard-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1rem;
-  }
-  
-  .dashboard-header h2 {
-    color: var(--primary-color);
-    margin: 0;
+
   }
   
   .dashboard-actions {
     display: flex;
-    gap: 1rem;
-  }
-  
-  .action-button {
-    background-color: var(--secondary-color);
-    color: white;
-    text-decoration: none;
-    padding: 0.6rem 1.2rem;
-    border-radius: var(--border-radius);
-    font-weight: 500;
-    transition: background-color 0.3s;
-  }
-  
-  .action-button:hover {
-    background-color: #2980b9;
-  }
-  
-  .stats-section {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+
   }
   
   .stat-card {
     background-color: white;
-    border-radius: var(--border-radius);
-    box-shadow: var(--box-shadow);
-    padding: 1.5rem;
-    text-align: center;
-    transition: transform 0.3s;
+
   }
   
   .stat-card:hover {
     transform: translateY(-5px);
   }
   
-  .highlight-card {
-    border-left: 4px solid var(--accent-color);
-  }
-  
-  .stat-value {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    color: var(--secondary-color);
-  }
-  
-  .stat-label {
-    font-size: 0.9rem;
-    color: var(--gray-color);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-  
-  .dashboard-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
+
   }
   
   .dashboard-section {
     background-color: white;
-    border-radius: var(--border-radius);
-    box-shadow: var(--box-shadow);
-    padding: 1.5rem;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .dashboard-section h3 {
-    color: var(--primary-color);
-    margin-top: 0;
-    margin-bottom: 1rem;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 0.8rem;
-  }
-  
-  .followups-today {
-    grid-column: 1;
-    grid-row: 1 / span 2;
-  }
-  
-  .language-stats {
-    grid-column: 2;
-    grid-row: 1;
-  }
-  
-  .recent-conversations {
-    grid-column: 1;
-    grid-row: 3;
-  }
-  
-  .top-keywords {
-    grid-column: 2;
-    grid-row: 2 / span 2;
-  }
-  
-  .no-data-message {
-    text-align: center;
-    padding: 2rem;
-    color: var(--gray-color);
-    background-color: #f8f9fa;
-    border-radius: var(--border-radius);
-    font-style: italic;
-  }
-  
-  .followup-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  .followup-item {
-    border: 1px solid #eee;
-    border-radius: var(--border-radius);
-    padding: 1rem;
-    background-color: #f8f9fa;
-  }
-  
-  .followup-client {
-    font-weight: 600;
-    font-size: 1.1rem;
-    margin-bottom: 0.5rem;
-  }
-  
-  .followup-tags {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
-    flex-wrap: wrap;
-  }
-  
-  .language-tag {
-    background-color: #e8f4fc;
-    color: #2980b9;
-    border-radius: 1rem;
-    padding: 0.2rem 0.6rem;
-    font-size: 0.8rem;
-  }
-  
-  .status-tag {
-    color: white;
-    border-radius: 1rem;
-    padding: 0.2rem 0.6rem;
-    font-size: 0.8rem;
-  }
-  
-  .followup-topics {
-    margin-bottom: 0.8rem;
-    font-size: 0.9rem;
-    color: var(--gray-color);
-  }
-  
-  .followup-actions {
-    display: flex;
-    gap: 0.5rem;
-  }
-  
-  .action-btn {
-    padding: 0.4rem 0.8rem;
-    font-size: 0.9rem;
-    border-radius: 4px;
-    border: none;
-  }
-  
-  .call-btn {
-    background-color: var(--success-color);
-    color: white;
-  }
-  
-  .message-btn {
-    background-color: var(--secondary-color);
-    color: white;
-  }
-  
-  .reschedule-btn {
-    background-color: var(--warning-color);
-    color: white;
-  }
-  
-  .language-chart {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  .chart-bar-container {
-    display: flex;
-    align-items: center;
-  }
-  
-  .chart-label {
-    width: 80px;
-    font-size: 0.9rem;
-  }
-  
-  .chart-bar-wrapper {
-    flex: 1;
-    height: 25px;
-    background-color: #f0f0f0;
-    border-radius: 3px;
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-  }
-  
-  .chart-bar {
-    height: 100%;
-    border-radius: 3px;
-    transition: width 0.5s ease-out;
-  }
-  
-  .chart-value {
-    position: absolute;
-    right: 10px;
-    font-weight: 600;
-    color: white;
-    text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
-  }
-  
-  .conversation-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1rem;
-    overflow-y: auto;
-    max-height: 400px;
-  }
-  
-  .conversation-card {
-    background-color: white;
-    border: 1px solid #eee;
-    border-radius: var(--border-radius);
-    padding: 1rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    transition: transform 0.2s;
-  }
-  
-  .conversation-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .conversation-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.5rem;
-  }
-  
-  .client-name {
-    font-weight: 600;
-  }
-  
-  .conversation-status {
-    font-size: 0.8rem;
-    font-weight: 500;
-  }
-  
-  .conversation-date {
-    font-size: 0.8rem;
-    color: var(--gray-color);
-    margin-bottom: 0.5rem;
-  }
-  
-  .conversation-languages {
-    display: flex;
-    gap: 0.3rem;
-    margin-bottom: 0.8rem;
-    flex-wrap: wrap;
-  }
-  
-  .conversation-topics {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.3rem;
-    margin-bottom: 0.8rem;
-  }
-  
-  .topic-tag {
-    background-color: #f0f7ff;
-    color: #2980b9;
-    padding: 0.2rem 0.5rem;
-    border-radius: 3px;
-    font-size: 0.8rem;
-  }
-  
-  .conversation-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.85rem;
-  }
-  
-  .followup-date {
-    color: var(--gray-color);
-  }
-  
-  .conversation-actions {
-    display: flex;
-    gap: 0.3rem;
-  }
-  
-  .icon-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 1.1rem;
-    padding: 0.2rem;
-    border-radius: 3px;
-  }
-  
-  .icon-btn:hover {
-    background-color: #f0f0f0;
-  }
-  
-  .keywords-cloud {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    justify-content: center;
-    align-items: center;
-    padding: 1rem;
-  }
-  
-  .keyword-tag {
-    background-color: #f0f7ff;
-    color: var(--secondary-color);
-    padding: 0.5rem 1rem;
-    border-radius: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-    transition: transform 0.2s;
-  }
-  
-  .keyword-tag:hover {
-    transform: scale(1.05);
-  }
-  
-  .keyword-count {
-    background-color: var(--secondary-color);
-    color: white;
-    border-radius: 50%;
-    width: 1.5rem;
-    height: 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.8rem;
-    font-weight: 600;
-  }
-  
-  /* Responsive adjustments */
-  @media (max-width: 1200px) {
-    .dashboard-grid {
-      grid-template-columns: 1fr;
-    }
-    
-    .followups-today,
-    .language-stats,
-    .recent-conversations,
-    .top-keywords {
-      grid-column: 1;
-      grid-row: auto;
-    }
-  }
-  /* Add these styles to your Dashboard.css file */
 
-/* Grid layout updates for the news section */
-.dashboard-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-  }
-  
-  .followups-today {
-    grid-column: 1;
-    grid-row: 1;
-  }
-  
-  .featured-properties {
-    grid-column: 2;
-    grid-row: 1;
-  }
-  
-  .real-estate-news {
-    grid-column: 1 / -1;
-    grid-row: 2;
-  }
-  
-  /* Real Estate News Styling */
-  .real-estate-news .news-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
-    gap: 1.5rem;
   }
   
   .news-item {
     display: flex;
-    background-color: white;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease-in-out;
-  }
-  
-  .news-item:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  }
-  
-  .news-image {
-    width: 120px;
-    min-width: 120px;
-    height: 120px;
+
   }
   
   .news-image img {
@@ -448,96 +42,28 @@
   }
   
   .news-content {
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-  }
-  
-  .news-title {
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+
     line-height: 1.3;
   }
   
   .news-title a {
-    color: var(--primary-color);
+
     text-decoration: none;
   }
   
   .news-title a:hover {
-    text-decoration: underline;
-  }
-  
-  .news-source {
-    font-size: 0.8rem;
-    color: var(--gray-color);
-    margin-bottom: 0.5rem;
-  }
-  
-  .news-description {
-    font-size: 0.9rem;
-    color: #666;
+
     margin: 0;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    flex-grow: 1;
-  }
-  
-  /* Responsive adjustments */
-  @media (max-width: 992px) {
+
     .dashboard-grid {
       grid-template-columns: 1fr;
     }
     
-    .followups-today,
-    .featured-properties,
-    .real-estate-news {
-      grid-column: 1;
-      grid-row: auto;
-    }
-    
-    .real-estate-news .news-list {
-      grid-template-columns: 1fr;
-    }
-  }
-  
-  @media (max-width: 576px) {
-    .news-item {
-      flex-direction: column;
-    }
-    
-    .news-image {
-      width: 100%;
-      height: 160px;
-      min-width: auto;
-    }
-  }
-  
-  @media (max-width: 768px) {
-    .stats-section {
-      grid-template-columns: repeat(2, 1fr);
-    }
-    
-    .dashboard-header {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 1rem;
-    }
-    
-    .dashboard-actions {
-      width: 100%;
-      justify-content: space-between;
-    }
-    
-    .conversation-list {
+
       grid-template-columns: 1fr;
     }
   }

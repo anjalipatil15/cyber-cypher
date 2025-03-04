@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+
 import { Link } from 'react-router-dom';
 import { getProperties, getRealEstateNews } from '../utils/api';
 import './Dashboard.css';
@@ -11,7 +11,7 @@ const Dashboard = ({ currentLanguage }) => {
     totalProperties: 0,
     featuredProperties: 0,
     newListingsThisWeek: 0,
-    mostViewedProperties: 0
+
   });
   const [loading, setLoading] = useState({
     properties: true,
@@ -22,14 +22,7 @@ const Dashboard = ({ currentLanguage }) => {
     news: null
   });
   
-  // Fetch all data on component mount
-  useEffect(() => {
-    fetchProperties();
-    fetchRealEstateNews();
-  }, []);
-  
-  // Fetch property data from API
-  const fetchProperties = async () => {
+
     setLoading(prev => ({ ...prev, properties: true }));
     setError(prev => ({ ...prev, properties: null }));
     
@@ -49,8 +42,7 @@ const Dashboard = ({ currentLanguage }) => {
       // Combine all property results
       let allProperties = [];
       responses.forEach(response => {
-        if (response.success && response.data && response.data.properties) {
-          allProperties = [...allProperties, ...response.data.properties];
+
         }
       });
       
@@ -64,22 +56,7 @@ const Dashboard = ({ currentLanguage }) => {
         return;
       }
       
-      // Set all properties
-      setProperties(allProperties);
-      
-      // Select a subset of properties to feature (first 4)
-      setFeaturedProperties(allProperties.slice(0, 4));
-      
-      // Calculate statistics
-      const oneWeekAgo = new Date();
-      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-      
-      // Mock statistics since we don't have full property metadata
-      setStatistics({
-        totalProperties: allProperties.length,
-        featuredProperties: 4,
-        newListingsThisWeek: Math.floor(allProperties.length * 0.2), // Mock 20% as new
-        mostViewedProperties: Math.floor(allProperties.length * 0.1) // Mock 10% as most viewed
+
       });
       
     } catch (err) {
@@ -91,10 +68,7 @@ const Dashboard = ({ currentLanguage }) => {
     }
     
     setLoading(prev => ({ ...prev, properties: false }));
-  };
-  
-  // Fetch real estate news
-  const fetchRealEstateNews = async () => {
+
     setLoading(prev => ({ ...prev, news: true }));
     setError(prev => ({ ...prev, news: null }));
     
@@ -118,7 +92,7 @@ const Dashboard = ({ currentLanguage }) => {
     }
     
     setLoading(prev => ({ ...prev, news: false }));
-  };
+
   
   // Helper to format news publication date
   const formatNewsDate = (dateString) => {
@@ -146,6 +120,7 @@ const Dashboard = ({ currentLanguage }) => {
     });
   };
   
+
   return (
     <div className="dashboard-container">
       <div className="dashboard-header">
@@ -167,17 +142,7 @@ const Dashboard = ({ currentLanguage }) => {
               <div className="stat-value">{statistics.totalProperties}</div>
               <div className="stat-label">Total Properties</div>
             </div>
-            <div className="stat-card">
-              <div className="stat-value">{statistics.featuredProperties}</div>
-              <div className="stat-label">Featured Properties</div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-value">{statistics.newListingsThisWeek}</div>
-              <div className="stat-label">New Listings This Week</div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-value">{statistics.mostViewedProperties}</div>
-              <div className="stat-label">Most Viewed</div>
+
             </div>
           </>
         )}
@@ -206,6 +171,7 @@ const Dashboard = ({ currentLanguage }) => {
                     ) : (
                       <div className="placeholder-image">No Image</div>
                     )}
+
                   </div>
                   <div className="property-details">
                     <h4 className="property-title">{property.title}</h4>
@@ -259,6 +225,7 @@ const Dashboard = ({ currentLanguage }) => {
                     ) : (
                       <div className="placeholder-mini-image">No Image</div>
                     )}
+
                   </div>
                   <div className="latest-property-details">
                     <h4 className="property-title">{property.title}</h4>

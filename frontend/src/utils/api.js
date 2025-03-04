@@ -1,7 +1,3 @@
-import axios from 'axios';
-
-const NEWS_API_KEY = "f27c0ff37bea4278b84b7bb5cf71fe48";
-export const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -11,6 +7,7 @@ const apiClient = axios.create({
   withCredentials: true,
   timeout: 10000,
 });
+
 
 const handleApiError = (error) => {
   if (error.response) {
@@ -38,7 +35,6 @@ const handleApiError = (error) => {
   }
 };
 
-export const getRealEstateNews = async (pageSize = 5) => {
   try {
     console.log('Fetching real estate news...');
     const query = "real estate OR property market OR housing India";
@@ -53,6 +49,7 @@ export const getRealEstateNews = async (pageSize = 5) => {
     });
     if (response.data && response.data.articles) {
       console.log(`Fetched ${response.data.articles.length} news articles`);
+
       return { success: true, data: response.data.articles };
     } else {
       console.error('Invalid news response structure:', response.data);
@@ -70,6 +67,7 @@ export const getRealEstateNews = async (pageSize = 5) => {
   }
 };
 
+
 export const sendChatMessage = async (prompt, sourceLanguage, targetLanguage) => {
   try {
     console.log(`Sending chat request to ${API_BASE_URL}/chatbot`);
@@ -80,6 +78,7 @@ export const sendChatMessage = async (prompt, sourceLanguage, targetLanguage) =>
     return handleApiError(error);
   }
 };
+
 
 export const checkServerConnection = async () => {
   try {
@@ -93,25 +92,3 @@ export const checkServerConnection = async () => {
   }
 };
 
-export const getProperties = async (filters = {}) => {
-  try {
-    const params = new URLSearchParams();
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value !== undefined && value !== null && value !== '') {
-        params.append(key, value);
-      }
-    });
-    console.log(`Fetching properties with filters: ${params.toString()}`);
-    const response = await apiClient.get(`/api/properties?${params.toString()}`);
-    return { success: true, data: response.data };
-  } catch (error) {
-    return handleApiError(error);
-  }
-};
-
-export default {
-  sendChatMessage,
-  getRealEstateNews,
-  checkServerConnection,
-  getProperties
-};
