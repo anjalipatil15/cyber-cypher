@@ -140,14 +140,20 @@ const SpeechRecognition = ({ currentLanguage }) => {
   };
 
   const highlightKeywords = (text) => {
-    if (!text) return;
+    if (!text || typeof text !== 'string') {
+      // If text is undefined, null, or not a string, return an empty string
+      setHighlightedText('');
+      return;
+    }
     
     let highlightedContent = text;
     const keywords = realEstateKeywords[currentLanguage] || realEstateKeywords.en;
     
     keywords.forEach(keyword => {
-      const regex = new RegExp(`\\b${keyword}\\b`, 'gi');
-      highlightedContent = highlightedContent.replace(regex, `<span class="highlight">${keyword}</span>`);
+      if (typeof keyword === 'string') {
+        const regex = new RegExp(`\\b${keyword}\\b`, 'gi');
+        highlightedContent = highlightedContent.replace(regex, `<span class="highlight">${keyword}</span>`);
+      }
     });
     
     setHighlightedText(highlightedContent);
@@ -210,9 +216,10 @@ const SpeechRecognition = ({ currentLanguage }) => {
       alert("No text to translate!");
       return;
     }
-
+  
     try {
-      // Using your backend service for translation
+      console.log("Translating text:", transcription.substring(0, 50) + "...");
+      
       const response = await axios.post(
         "http://localhost:5000/live-translate",
         {
@@ -220,11 +227,25 @@ const SpeechRecognition = ({ currentLanguage }) => {
           targetLanguage
         }
       );
-
-      setTranslatedText(response.data.translation);
+  
+      if (response.data && response.data.translation) {
+        setTranslatedText(response.data.translation);
+      } else {
+        setTranslatedText("Translation returned empty result.");
+        console.error("Empty translation result:", response.data);
+      }
     } catch (error) {
       console.error("Translation error:", error);
-      alert("Failed to translate text. Is the server running?");
+      setTranslatedText("Translation failed. Please try again.");
+      
+      // Show a more user-friendly error message
+      if (error.response && error.response.status === 500) {
+        alert("Server error during translation. The translation service might be unavailable.");
+      } else if (!error.response) {
+        alert("Cannot connect to the translation server. Please make sure the backend is running.");
+      } else {
+        alert("Translation failed: " + (error.response?.data?.error || "Unknown error"));
+      }
     }
   };
 

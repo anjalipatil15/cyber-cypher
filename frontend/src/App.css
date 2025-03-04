@@ -194,3 +194,16 @@
       padding: 1rem;
     }
   }
+  .server-status-alert {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 1rem;
+    margin-bottom: 0;
+    text-align: center;
+    font-weight: 500;
+    border-bottom: 1px solid #f5c6cb;
+  }
+  
+  .server-status-alert p {
+    margin: 0;
+  }
