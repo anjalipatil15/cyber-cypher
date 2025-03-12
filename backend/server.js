@@ -26,41 +26,36 @@ app.use(cors({
   credentials: true
 }));
 
-// Middleware
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(fileUpload({
   createParentPath: true,
-  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB max file size
+  limits: { fileSize: 50 * 1024 * 1024 }, 
 }));
 
-// Rate Limiting
+
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  windowMs: 15 * 60 * 1000, 
+  max: 100,
   message: "Too many requests, please try again later"
 });
 app.use(limiter);
 
-// Ensure uploads directory exists
 const uploadsDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
-// Initialize Google Generative AI
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-// AssemblyAI API Key
 const ASSEMBLYAI_API_KEY = process.env.ASSEMBLYAI_API_KEY || "b6b429b14ef94aa5a081cdf35d612088";
 
-// Translation URLs with fallbacks
 const LIBRETRANSLATE_URLS = [
   process.env.LIBRETRANSLATE_URL || "https://translate.argosopentech.com/translate",
   "https://libretranslate.de/translate"
 ];
 
-// Health Check Endpoint
 app.get("/health", (req, res) => {
   res.status(200).json({ 
     status: "up",
@@ -69,7 +64,6 @@ app.get("/health", (req, res) => {
   });
 });
 
-// Attempt translation with multiple services
 async function attemptTranslation(text, sourceLanguage, targetLanguage) {
   for (const url of LIBRETRANSLATE_URLS) {
     try {
@@ -83,20 +77,20 @@ async function attemptTranslation(text, sourceLanguage, targetLanguage) {
         },
         {
           headers: { "Content-Type": "application/json" },
-          timeout: 10000 // 10 second timeout
+          timeout: 10000 
         }
       );
       return response.data.translatedText;
     } catch (error) {
       console.error(`Translation failed with URL ${url}:`, error.message);
-      // Continue to next URL if this one fails
+     
     }
   }
-  // If all URLs fail, throw an error
+ 
   throw new Error("All translation services unavailable");
 }
 
-// Chatbot Route with Multilingual Support
+
 app.post("/chatbot", async (req, res) => {
   const { prompt, sourceLanguage, targetLanguage } = req.body;
 
@@ -107,7 +101,7 @@ app.post("/chatbot", async (req, res) => {
   try {
     const model = genAI.getGenerativeModel({ model: "gemini-2.0-pro-exp-02-05" });
 
-    // Enhanced prompt for multilingual context
+
     const enhancedPrompt = `Context: This is a real estate communication assistant handling a multilingual conversation.
 Source Language: ${sourceLanguage || 'Not specified'}
 Target Language: ${targetLanguage || 'Not specified'}
@@ -134,19 +128,16 @@ Please provide a professional, culturally sensitive response in ${targetLanguage
   }
 });
 
-// Cache for property data to avoid frequent API calls
 let propertyCache = {
   timestamp: null,
   data: null,
-  expiresIn: 60 * 60 * 1000, // 1 hour in milliseconds
+  expiresIn: 60 * 60 * 1000, 
 };
 
-// Get property listings from both MagicBricks and Housing.com
 app.get('/api/properties', async (req, res) => {
   try {
     const now = Date.now();
-    
-    // Extract search parameters from request
+
     const searchParams = {
       bedrooms: req.query.bedrooms || '2,3',
       propertyType: req.query.propertyType || 'Multistorey-Apartment,Builder-Floor-Apartment,Penthouse,Studio-Apartment,Residential-House,Villa',
