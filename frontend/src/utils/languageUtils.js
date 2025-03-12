@@ -8,12 +8,11 @@ export const getBrowserLanguage = () => {
   const browserLang = navigator.language || navigator.userLanguage;
   const langCode = browserLang.split('-')[0]; // Get the primary language code
   
-  // Check if the browser language is in our supported languages
+  
   if (supportedLanguages.some(lang => lang.code === langCode)) {
     return langCode;
   }
-  
-  // Default to English
+
   return 'en';
 };
 
@@ -39,13 +38,11 @@ export const getSpeechRecognitionLanguage = (languageCode) => {
  * @returns {boolean} Whether the language is supported
  */
 export const isSpeechRecognitionSupported = (languageCode) => {
-  // First check if speech recognition is available at all
+
   if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
     return false;
   }
-  
-  // For now, we'll assume all our supported languages are available
-  // In a production app, you might want to check more specifically
+
   return supportedLanguages.some(lang => lang.code === languageCode);
 };
 
@@ -56,32 +53,24 @@ export const isSpeechRecognitionSupported = (languageCode) => {
  */
 export const detectLanguage = (text) => {
   if (!text || text.trim() === '') {
-    return 'en'; // Default to English for empty text
+    return 'en'; 
   }
   
-  // This is a very simplistic language detection
-  // For real applications, consider using a dedicated library
-  
-  // Hindi character range check (Devanagari script)
   const hindiRegex = /[\u0900-\u097F]/;
   if (hindiRegex.test(text)) {
     return 'hi';
   }
   
-  // Marathi uses the same script as Hindi (Devanagari)
-  // For simplicity, we'll use some common Marathi words for detection
   const marathiWords = ['आहे', 'नाही', 'मराठी', 'पुणे', 'मुंबई'];
   if (marathiWords.some(word => text.includes(word))) {
     return 'mr';
   }
-  
-  // Telugu character range check
+
   const teluguRegex = /[\u0C00-\u0C7F]/;
   if (teluguRegex.test(text)) {
     return 'te';
   }
-  
-  // Default to English if no other language detected
+
   return 'en';
 };
 
