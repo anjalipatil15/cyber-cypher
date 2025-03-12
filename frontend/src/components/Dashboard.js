@@ -122,6 +122,7 @@ const Dashboard = ({ currentLanguage }) => {
   
 
   return (
+    {
     <div className="dashboard-container">
       <div className="dashboard-header">
         <h2>Real Estate Dashboard</h2>
@@ -289,6 +290,7 @@ const Dashboard = ({ currentLanguage }) => {
         </section>
       </div>
     </div>
+        
   );
 };
 

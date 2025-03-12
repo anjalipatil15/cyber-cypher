@@ -104,7 +104,7 @@ export const formatTextByLanguage = (text, languageCode) => {
  * @returns {string} 'rtl' for right-to-left languages, 'ltr' otherwise
  */
 export const getTextDirection = (languageCode) => {
-  // None of our current languages are RTL, but this is for future expansion
+ 
   const rtlLanguages = ['ar', 'he', 'ur'];
   return rtlLanguages.includes(languageCode) ? 'rtl' : 'ltr';
 };

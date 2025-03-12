@@ -8,19 +8,18 @@ const path = require("path");
 const fs = require("fs");
 require("dotenv").config();
 
-// Import Apify Service - now with both sources
+
 const { startMagicBricksScraper, startHousingComScraper, fetchAllProperties } = require('./apifyService');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// CORS Configuration
 app.use(cors({
   origin: [
-    "http://localhost:3000",  // React development server default
-    "http://localhost:3001",  // Alternative React port
-    "http://localhost:3002",  // Your current React port
-    "http://localhost:5000"   // Express server
+    "http://localhost:3000",  
+    "http://localhost:3001",  
+    "http://localhost:3002",  
+    "http://localhost:5000"   
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
